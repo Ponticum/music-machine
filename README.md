@@ -77,61 +77,7 @@ Each playlist is stored in its own directory, making it easy for users to update
 
 ### Code Walkthrough:
 
-#### Data Retrieval Functions:
-The program uses APIs to fetch weather and moon phase data, ensuring the music selection aligns with real-time environmental conditions.  
-
-```python
-def get_wea_data():
-    """Fetch weather data from the OpenWeather API."""
-    try:
-        response = requests.get(wea_url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"WEA-OFFLINE: {e}")
-        return None
-
-def get_geo_data():
-    """Fetch moon phase data from the IP Geolocation API."""
-    try:
-        response = requests.get(geo_url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"GEO-OFFLINE: {e}")
-        return None
-```
-
-#### Theme Selection Logic:
-
-The program evaluates multiple conditions to determine the best playlist. It prioritizes time-based themes first, then checks moon phase data, weather conditions, and finally defaults to the current season if no other criteria are met.
-
-```python
-def select_theme(wea_data, geo_data):
-    """Select the most appropriate music theme based on current conditions."""
-    hour = datetime.datetime.now().hour
-    if 6 <= hour < 8:
-        return "morning"
-    if 18 <= hour < 20:
-        return "evening"
-
-    if geo_data:
-        moon_phase = geo_data.get("moon_phase", "").lower()
-        if "full" in moon_phase:
-            return "full-moon"
-
-    if wea_data:
-        degrees = wea_data["main"]["temp"]
-        weather = wea_data["weather"][0]["main"].lower()
-        if degrees > 30:
-            return "heat-wave"
-        if degrees < 0:
-            return "cold-wave"
-        if "rain" in weather:
-            return "rainy-day"
-    
-    return get_season(datetime.datetime.now().month)
-```
+![flow_chart](https://github.com/user-attachments/assets/a8cdf9ce-a4f0-4856-9e7e-15af451ec05b)
 
 #### Playback Function:
 
